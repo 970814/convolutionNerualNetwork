@@ -9,6 +9,7 @@ function [z] = nnConvolution(a,w)
 %    w 是卷积核，是一个x*y*c的多维数组，x*y为卷积核大小（局部接受视野），c为通道数量
 %    a和w的通道数量需要匹配
 %    产生的结果是一个(h-x+1 * w-y+1)*1*m 的矩阵
+%    步幅为1
 
     z = convn(a,rot90(w,2),'valid');
 
