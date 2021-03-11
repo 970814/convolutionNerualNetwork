@@ -17,8 +17,8 @@ function forwardPropagation(X,L,w,b,layerTypes,layerNeruals,ps)
                 z(:,:,c,:) = nnConvolution(a , w{l}(:,:,:,c)) .+ b{l}(c);
 
             end;
-            %            a = nonlinearActivateFunction(z);
-            a=z;
+            a = nonlinearActivateFunction(z);
+
             size(a)
 
         elseif layerTypes(l) == 1,
@@ -47,8 +47,7 @@ function forwardPropagation(X,L,w,b,layerTypes,layerNeruals,ps)
             size(a)
 %            加权输入
             z = w{l} * a +b{l};
-%             a = nonlinearActivateFunction(z);
-            a=z;
+            a = nonlinearActivateFunction(z);
             size(a)
         elseif layerTypes(l) == 3,
     %        如果是softmax输出层,
@@ -71,9 +70,14 @@ function forwardPropagation(X,L,w,b,layerTypes,layerNeruals,ps)
             end;
 %           softmax 映射转换成概率分布
 %            z 是typeCount*m的矩阵
-z
+            z
+% 由于指数可能会输出一个inf，因此需要做归一化
+%max(z)
+%            z = z - max(z)   该归一化不好，
+%             z = z ./ max(z)
             t = e.^(z)
-%            t = log(z)   这替换上面的代码能fix NaN问题
+
+
 %            归一化
             a = t ./ sum(t,1);
             size(a)
