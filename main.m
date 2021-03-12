@@ -32,7 +32,7 @@ L = length(layerTypes);
 
 %向前传播算法
 %载入训练集
-[X,Y,types] = loadFingerTrainData(10);
+[X,Y,types] = loadFingerTrainData(1);
 m=length(Y)
 % 数据归一化
 % 将unit8转换成0～1之间的double
@@ -46,6 +46,7 @@ end;
 y
 
 forwardPropagation(x,y,L,w,b,layerTypes,layerNeruals,ps)
+backPropagation(x,y,L,w,b,layerTypes,layerNeruals,ps)
 
 
 

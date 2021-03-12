@@ -81,7 +81,7 @@ function cost = forwardPropagation(x,y,L,w,b,layerTypes,layerNeruals,ps)
 % 由于指数可能会输出一个inf，因此需要做归一化
 %max(z)
 %            z = z - max(z)   该归一化不好，
-%             z = z ./ max(z)
+             z = z ./ max(z);
             t = e.^(z)
 
 
@@ -96,6 +96,9 @@ function cost = forwardPropagation(x,y,L,w,b,layerTypes,layerNeruals,ps)
     a
 
     [n,m]=size(a);
-    cost = sum(-log(a(find(y==1))))/m
+    cost = sum(-log(a(find(y==1))))/m;
 
 end;
+
+
+
