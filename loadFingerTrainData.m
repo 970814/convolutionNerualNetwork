@@ -1,4 +1,4 @@
-function [X,train_set_y,list_classes] = loadFingerTrainData(maxSize)
+function [X,Y,list_classes] = loadFingerTrainData(maxSize)
 
     %载入数据
     load('../dataSets/fingers/train_signs.h5');
@@ -15,6 +15,7 @@ function [X,train_set_y,list_classes] = loadFingerTrainData(maxSize)
 %    在这里进行还原，
     m = min(maxSize,m);
     X = X(:,:,:,[1:m]);
+    Y = train_set_y([1:m]);
 
 %imshow(X(:,:,:,1));
 %   X 为图片数据，是 h*w*c*m 的维度，

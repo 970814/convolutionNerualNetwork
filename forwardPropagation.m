@@ -1,8 +1,8 @@
-function forwardPropagation(X,L,w,b,layerTypes,layerNeruals,ps)
+function cost = forwardPropagation(x,y,L,w,b,layerTypes,layerNeruals,ps)
 
 
-    size(X)
-    a=X;
+    size(x)
+    a=x;
     for l=2:L,
         l
         z=[];
@@ -87,4 +87,8 @@ function forwardPropagation(X,L,w,b,layerTypes,layerNeruals,ps)
         end;
     end;
     a
+
+    [n,m]=size(a);
+    cost = sum(-log(a(find(y==1))))/m
+
 end;
