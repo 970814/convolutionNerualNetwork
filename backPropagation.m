@@ -1,4 +1,4 @@
-function cost = backPropagation(x,y,L,w,b,layerTypes,layerNeruals,ps)
+function [cost,gw,gb] = backPropagation(x,y,L,w,b,layerTypes,layerNeruals,ps)
 %     反向传播算法，计算w和b的梯度
 
 %    x 输入图片数据，为H*W*C*M多维数组, 分别为高、宽、通道数、样本数
@@ -194,7 +194,7 @@ function cost = backPropagation(x,y,L,w,b,layerTypes,layerNeruals,ps)
                     for i=1:featureMapCount,
 %                此时定义就为数学上的全卷积操作，旋转360度等于没转
 %                2维全卷积操作
-                        Delta{l}(:,:,j,k) =Delta{l}(:,:,j,k) + conv2(Delta{l+1}(:,:,i,k),w{l+1}(:,:,j,i),'full');
+                        Delta{l}(:,:,j,k) =Delta{l}(:,:,j,k) + (conv2(Delta{l+1}(:,:,i,k),w{l+1}(:,:,j,i),'full') .* derNonLinActFun(z{l}(:,:,j,k)));
                     end;
                 end;
             end;
@@ -212,7 +212,6 @@ function cost = backPropagation(x,y,L,w,b,layerTypes,layerNeruals,ps)
 
 %    计算梯度
     for l=2:L,
-        l
         if layerTypes(l) == 3 || layerTypes(l) == 2,
 %            如果当前层是softxmax或全连接层，
 
@@ -237,9 +236,9 @@ function cost = backPropagation(x,y,L,w,b,layerTypes,layerNeruals,ps)
             for j =1:C,
                 gb{l}(j,1) = 0;
                 for k=1:M,
-                    gb{l}(j,1)= gb{l}(j,1) + sum(sum(Delta{l}(:,:,j,k)))
+                    gb{l}(j,1)= gb{l}(j,1) + sum(sum(Delta{l}(:,:,j,k)));
                 end;
-                gb{l}(j,1) = gb{l}(j,1) ./ M
+                gb{l}(j,1) = gb{l}(j,1) ./ M;
             end;
 
 %           计算卷积核的4维,C2维卷积核的通道数，M2为卷积核的个数
@@ -270,7 +269,7 @@ function cost = backPropagation(x,y,L,w,b,layerTypes,layerNeruals,ps)
         size(gw{l})
         size(gb{l})
     end;
-gw
+%gw
 end;
 
 
