@@ -1,5 +1,11 @@
 function cost = forwardPropagation(x,y,L,w,b,layerTypes,layerNeruals,ps)
-
+%    x 输入图片数据，为H*W*C*M多维数组, 分别为高、宽、通道数、样本数
+%    y 为图片标签，  为T*M 的矩阵，分别为类别个数、样本数
+%    L 为网络层数，
+%    w、b为学习参数，w{l}代表l层的参数
+%    layerTypes 标记了每层的层类型，-1代表输入层，0代表卷积层，1代表池化层，2代表全连接层，3代表输出层
+%    layerNeruals 记录了每层的神经元个数
+%    ps 记录每层的池化大小
 
     size(x)
     a=x;
@@ -26,6 +32,7 @@ function cost = forwardPropagation(x,y,L,w,b,layerTypes,layerNeruals,ps)
             r = layerNeruals(l,1);
             c = layerNeruals(l,2);
 
+    %  默认采用最大池化，
             for j=1:c,
                 for i=1:r,
                     t = a([((i-1)*ps{l}(1)+1):(i*ps{l}(1))],[((j-1)*ps{l}(2)+1):(j*ps{l}(2))],:,:);
