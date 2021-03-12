@@ -12,7 +12,7 @@ function cost = backPropagation(x,y,L,w,b,layerTypes,layerNeruals,ps)
 
 
 %  先进行向前传播算法
-    a={x};
+    a{1}=x;
     z={};
 %    用于记录 最大池化 前 最大值的位置
     maxPoolingLocation={};
@@ -107,6 +107,7 @@ function cost = backPropagation(x,y,L,w,b,layerTypes,layerNeruals,ps)
     a{L}
 
     y
+%    m为样本数量
     [n,m]=size(a{L});
     cost = sum(-log(a{L}(find(y==1))))/m;
 
@@ -208,6 +209,68 @@ function cost = backPropagation(x,y,L,w,b,layerTypes,layerNeruals,ps)
     for l =1:L,
         size(Delta{l})
     end;
+
+%    计算梯度
+    for l=2:L,
+        l
+        if layerTypes(l) == 3 || layerTypes(l) == 2,
+%            如果当前层是softxmax或全连接层，
+
+            [H,W,C,M]=size(a{l-1});
+%           转换成列向量
+            at = reshape(a{l-1},H*W*C,1,M);
+
+
+%            计算相应的梯度
+            gw{l} = Delta{l} * at' ./ m;
+
+            gb{l} = sum(Delta{l},2) ./ m;
+        elseif  layerTypes(l) == 1,
+%            池化层忽略
+        elseif layerTypes(l) == 0,
+%             如果当前层为卷积层
+%            获取当前误差的四维
+            [H,W,C,M] = size(Delta{l});
+
+
+%                计算C个偏置项梯度
+            for j =1:C,
+                gb{l}(j,1) = 0;
+                for k=1:M,
+                    gb{l}(j,1)= gb{l}(j,1) + sum(sum(Delta{l}(:,:,j,k)))
+                end;
+                gb{l}(j,1) = gb{l}(j,1) ./ M
+            end;
+
+%           计算卷积核的4维,C2维卷积核的通道数，M2为卷积核的个数
+            [H2,W2,C2,M2] = size(w{l});
+
+
+
+%                计算w梯度
+
+            for j=1:C2,
+                for i = 1:M2,
+%                   计算第i个卷积核的第j片梯度,
+                    gw{l}(:,:,j,i) = zeros(H2,W2);
+%                    计算k个样本梯度的平均值
+                    for k=1:m,
+%                        进行二维卷积操作
+                        gw{l}(:,:,j,i) =gw{l}(:,:,j,i) + nnConvolution(a{l-1}(:,:,j,k),Delta{l}(:,:,i,k));
+                    end;
+                    gw{l}(:,:,j,i) = gw{l}(:,:,j,i) ./ m;
+                end;
+            end;
+
+        end;
+    end;
+
+    for l =1:L,
+        l
+        size(gw{l})
+        size(gb{l})
+    end;
+gw
 end;
 
 
