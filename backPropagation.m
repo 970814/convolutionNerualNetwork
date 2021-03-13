@@ -1,4 +1,4 @@
-function [cost,gw,gb] = backPropagation(x,y,L,w,b,layerTypes,layerNeruals,ps)
+function [cost,gw,gb] = backPropagation(x,y,w,b,L,layerTypes,layerNeruals,ps)
 %     反向传播算法，计算w和b的梯度
 
 %    x 输入图片数据，为H*W*C*M多维数组, 分别为高、宽、通道数、样本数
@@ -93,7 +93,7 @@ function [cost,gw,gb] = backPropagation(x,y,L,w,b,layerTypes,layerNeruals,ps)
             z{l}
 % 由于指数可能会输出一个inf，因此需要做归一化
 %max(z)
-            z{l} = z{l} ./ max(z{l});
+%            z{l} = z{l} ./ max(z{l});
             t = e.^(z{l});
 
 
@@ -260,7 +260,9 @@ function [cost,gw,gb] = backPropagation(x,y,L,w,b,layerTypes,layerNeruals,ps)
                     gw{l}(:,:,j,i) = gw{l}(:,:,j,i) ./ m;
                 end;
             end;
-
+        else
+            disp(sprintf('未定义的网络层类型 %d',layerTypes(l)))
+            return;
         end;
     end;
 

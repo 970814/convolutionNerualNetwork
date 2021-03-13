@@ -8,25 +8,28 @@ layerTypes   = [-1,        0,          1,            0,            1,           
 layerNeruals = [64,64,3;   60,60,10;   30,30,10;   26,26,20;     13,13,20;       200,-1,-1;    6,-1,-1]
 %[12288   36000    9000   13520    3380     200       6]
 
-
-% 共享权重、过滤器、卷积核
-w{2} = rand(5,5,3,10);
-b{2} = rand(10,1);
-w{4} = rand(5,5,10,20);
-b{4} = rand(20,1);
-
 %池化区域大小
 ps{3}=[2,2];
 ps{5}=[2,2];
 
+wb= rand(5*5*3*10+10+5*5*10*20+20+200*3380+200+6*200+6,1);
 
+%% 共享权重、过滤器、卷积核
+%w{2} = rand(5,5,3,10);
+%b{2} = rand(10,1);
+%w{4} = rand(5,5,10,20);
+%b{4} = rand(20,1);
+%
 
-
-% 全连接层的参数
-w{6} = rand(200,3380);
-b{6} = rand(200,1);
-w{7} = rand(6,200);
-b{7} = rand(6,1);
+%
+%
+%
+%
+%% 全连接层的参数
+%w{6} = rand(200,3380);
+%b{6} = rand(200,1);
+%w{7} = rand(6,200);
+%b{7} = rand(6,1);
 %网络层数
 L = length(layerTypes);
 
@@ -44,11 +47,11 @@ for i =1:m,
     y(Y(i)+1,i)=1;
 end;
 y
+[w,b] = unboxingParameters(wb,L,layerTypes,layerNeruals);
+forwardPropagation(x,y,w,b,L,layerTypes,layerNeruals,ps)
+%backPropagation(x,y,L,w,b,layerTypes,layerNeruals,ps)
 
-forwardPropagation(x,y,L,w,b,layerTypes,layerNeruals,ps)
-backPropagation(x,y,L,w,b,layerTypes,layerNeruals,ps)
-
-
+cnnCostAndGradient(x,y,wb,L,layerTypes,layerNeruals,ps)
 
 
 

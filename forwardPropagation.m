@@ -1,4 +1,4 @@
-function cost = forwardPropagation(x,y,L,w,b,layerTypes,layerNeruals,ps)
+function cost = forwardPropagation(x,y,w,b,L,layerTypes,layerNeruals,ps)
 %    x 输入图片数据，为H*W*C*M多维数组, 分别为高、宽、通道数、样本数
 %    y 为图片标签，  为T*M 的矩阵，分别为类别个数、样本数
 %    L 为网络层数，
@@ -81,7 +81,7 @@ function cost = forwardPropagation(x,y,L,w,b,layerTypes,layerNeruals,ps)
 % 由于指数可能会输出一个inf，因此需要做归一化
 %max(z)
 %            z = z - max(z)   该归一化不好，
-             z = z ./ max(z);
+%             z = z ./ max(z);
             t = e.^(z)
 
 
