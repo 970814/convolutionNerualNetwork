@@ -3,14 +3,14 @@ close all;
 
 
 % -1 代表输入层，0代表卷积层，1代表池化层，2代表全连接层，3代表softmax输出层
-layerTypes   = [-1,        0,          1 ,               2,          3 ]
+layerTypes   = [-1,        0,    3 ]
 % 网络每层神经元的规模
-layerNeruals = [4,4,1;   3,3,2;       3,3,2;             9,1,1;    6,1,1]
+layerNeruals = [2,2,8;   1,1,1;  6,1,1]
 %[12288   36000    9000   13520    3380     200       6]
 
 %池化区域大小
 ps{3}=[1,1];
-ps{5}=[2,2];
+ps{5}=[1,1];
 
 %网络层数
 L = length(layerTypes);
@@ -84,27 +84,36 @@ for i =1:m,
 end;
 
 
-%x =rand(4,4,1,1);
+%x =rand(1,1,2,1);
 
+x=rand(2,2,8,2);
+y = [y y]
 
 %save wb.txt wb
 %save x.txt x
-load wb.txt
-load x.txt
-x
-x2 = x;
-x(:,:,:,1) = x2;
-x(:,:,:,2) = x2;
-x
+%load wb.txt
+%
+%x3 = x;
+%x3(:,:,1,:)=x;
+%x3(:,:,2,:)=x;
+%x=x3
+
+%x =rand(4,4,2,1)
+%x2 = x;
+%x(:,:,:,1) = x2;
+%x(:,:,:,2) = x2;
+%x
 
 
-y2 = y;
-y(:,:,:,1) = y2;
-y(:,:,:,2) = y2;
+%y2 = y;
+%y(:,:,:,1) = y2;
+%y(:,:,:,2) = y2;
+
+
+
 
 [w,b] = unboxingParameters(wb,L,layerTypes,layerNeruals);
 %相应的增加了x的数量，也需要相应的增加y数量
-
 
 
 

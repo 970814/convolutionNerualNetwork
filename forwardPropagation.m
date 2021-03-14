@@ -7,22 +7,25 @@ function cost = forwardPropagation(x,y,w,b,L,layerTypes,layerNeruals,ps)
 %    layerNeruals 记录了每层的神经元个数
 %    ps 记录每层的池化大小
 
-    [H,W,C,M]=size(x)
+%    [H,W,C,M]=size(x)
+    m=size(x,4);
     a=x;
     for l=2:L,
-%        l
-        z=[];
+        l
+        z  = zeros(layerNeruals(l,1),layerNeruals(l,2),layerNeruals(l,3),m);
         if layerTypes(l) == 0,
     %        如果是卷积层
 
     %        C为当前层卷积核的个数
-            C = size(w{l},4);
+            C = size(w{l},4)
 
             for c=1:C,
     %            多张多通道图片 与 3d卷积核 卷积操作
                 z(:,:,c,:) = nnConvolution(a , w{l}(:,:,:,c)) .+ b{l}(c);
 
             end;
+
+            size(z)
             a = nonlinearActivateFunction(z);
 
 %            size(a)
@@ -74,10 +77,11 @@ function cost = forwardPropagation(x,y,w,b,L,layerTypes,layerNeruals,ps)
 %            得到上一层的四维、高、宽、通道数、样本数量
             [H,W,C,M]=size(a);
 %           转换成列向量
-            a=reshape(a,H*W*C,1,M);
+            a=reshape(a,H*W*C,1,1,M);
 %            size(a)
 %            加权输入
             z = w{l} * a +b{l};
+            z=reshape(z,layerNeruals(l,1),layerNeruals(l,2),layerNeruals(l,3),M);
             a = nonlinearActivateFunction(z);
 %            size(a)
         elseif layerTypes(l) == 3,
@@ -87,10 +91,10 @@ function cost = forwardPropagation(x,y,w,b,L,layerTypes,layerNeruals,ps)
                 %    如果上一层不是全连接层，则需要变换成列向量
 
     %            得到上一层的四维、高、宽、通道数、样本数量
-                [H,W,C,M]=size(a);
+                [H,W,C,M]=size(a)
     %           转换成列向量
-                a=reshape(a,H*W*C,1,M);
-%                size(a)
+                a=reshape(a,H*W*C,1,1,M);
+                size(a)
     %            加权输入
                 z = w{l} * a +b{l};
 
@@ -99,6 +103,7 @@ function cost = forwardPropagation(x,y,w,b,L,layerTypes,layerNeruals,ps)
                  z = w{l} * a +b{l};
 %                 size(z)
             end;
+            z=reshape(z,layerNeruals(l,1),layerNeruals(l,2),layerNeruals(l,3),M);
 %           softmax 映射转换成概率分布
 %            z 是typeCount*m的矩阵
 %            z
@@ -118,11 +123,10 @@ function cost = forwardPropagation(x,y,w,b,L,layerTypes,layerNeruals,ps)
         end;
     end;
 %    a
-size(a)
+%size(a)
 
-    m=size(a,2);
-    a
-    y
+%    a
+%    y
 
     cost = sum(-log(a(find(y==1))))/m;
 

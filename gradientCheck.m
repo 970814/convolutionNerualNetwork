@@ -9,13 +9,13 @@ function err = gradientCheck(gw,gb,x,y,w,b,L,layerTypes,layerNeruals,ps)
         maxErrDiff = 0.0001
         wc = 0;
         bc = 0;
-        for l = 2:L,
+        for l = 3:L,
 %            l
 
 
             if layerTypes(l) == 3 || layerTypes(l) == 2 || layerTypes(l) == 0,
                 %            检测biases梯度是否正确
-                            N = length(b{l})
+                            N = length(b{l});
                             disp('开始检测 biases')
                             for n=1:N,
                                  b{l}(n)=b{l}(n) + epsilon;
@@ -101,7 +101,7 @@ function err = gradientCheck(gw,gb,x,y,w,b,L,layerTypes,layerNeruals,ps)
                                     disp(sprintf('卷积层w偏导数检测错误在第%d层的第%d个卷积核的第%d片的第%d行第%d列, 期望 %f, 实际是 %f, 差距是 %f',l,s1,s2,s3,s4,pdw,gw{l}(s4,s3,s2,s1),abs(pdw - gw{l}(s4,s3,s2,s1))));
             %              当检测到第一个错误时，将停止检测
                                     err=true;
-                                    disp('检测到梯度计算错误');
+%                                    disp('检测到梯度计算错误');
 %                                    return;
                                 else
                                     wc = wc+1;

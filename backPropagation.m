@@ -11,12 +11,15 @@ function [cost,gw,gb] = backPropagation(x,y,w,b,L,layerTypes,layerNeruals,ps)
 
 
 disp('start')
+% 记录样本个数
+    m=size(x,4);
 %  先进行向前传播算法
     a{1}=x;
     z={};
 %    用于记录 最大池化 前 最大值的位置
     maxPoolingLocation={};
     for l=2:L,
+        z{l}  = zeros(layerNeruals(l,1),layerNeruals(l,2),layerNeruals(l,3),m);
         if layerTypes(l) == 0,
     %        如果是卷积层
 
@@ -150,7 +153,7 @@ disp('start')
 
 %    y
 %    m为样本数量
-    m=size(a{L},4);
+%    m=size(a{L},4);
     cost = sum(-log(a{L}(find(y==1))))/m;
 
 %    for l =1:L,
@@ -168,15 +171,24 @@ disp('start')
 %   默认最后一层为softmax层，所以最后一层的误差为
     Delta{L} = a{L}-y;
 
+%a{L}
+444
+    a{L}
+    Delta{L}
     for l=(L-1):-1:2,
+        l
+%        Delta{l} = zeros(size(z{l}))
         if layerTypes(l+1) == 3 || layerTypes(l+1) == 2,
 %            如果当前层的下一层是softxmax或全连接层，
             Delta{l} = (w{l+1}' * Delta{l+1});
+            1223
+            size(w{l+1})
+            size(Delta{l+1})
 %           暂不考虑当前隐藏层为softmax层的情况，
 %            z{l}保留了层的结构，例如为池化层时，结构是多维数组，全连接层时，为2维矩阵
 %           但计算出的Delta{l}默认为2维矩阵结构，因此需要相应的将Delta{l}转换成当前层的结构。
 %           因此计算z的4维
-            [H,W,C,M]=size(z{l});
+            [H,W,C,M]=size(z{l})
             Delta{l} = reshape(Delta{l},H,W,C,M);
             if layerTypes(l) ~= 1,
 %                如果当前层不是池化层，则需要乘以激活函数的导数，否则池化层激活函数为f(x)=x,导数为1，不必乘。
@@ -304,7 +316,7 @@ disp('start')
         elseif layerTypes(l) == 0,
 %             如果当前层为卷积层
 %            获取当前误差的四维
-            [H,W,C,M] = size(Delta{l});
+            [H,W,C,M] = size(Delta{l})
 
 
 %                计算C个偏置项梯度
@@ -317,7 +329,7 @@ disp('start')
             end;
 
 %           计算卷积核的4维,C2维卷积核的通道数，M2为卷积核的个数
-            [H2,W2,C2,M2] = size(w{l});
+            [H2,W2,C2,M2] = size(w{l})
 
 
 
@@ -359,6 +371,9 @@ end;
 
 
 
-
+%开始检测卷积层 weights
+%卷积层w偏导数检测错误在第2层的第1个卷积核的第1片的第1行第1列, 期望 0.027154, 实际是 0.000000, 差距是 0.027154
+%检测到梯度计算错误
+%卷积层w偏导数检测错误在第2层的第1个卷积核的第2片的第1行第1列, 期望 0.000000, 实际是 0.027154, 差距是 0.027154
 
 
