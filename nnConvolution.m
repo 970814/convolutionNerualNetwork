@@ -15,7 +15,7 @@ function [z] = nnConvolution(a,w)
 %    产生的结果是 a1 * wn+ ...+ ai * wk+ ...+ aj * wj + ...+ ak * wi+ ...+an * w1,
 %   而我们期待的是a1 * w1+ ...+ ai * wi+ ...+ aj * wj + ...+ ak * wk+... + an * wn,
 %    z = convn(a,rot90(w,2),'valid');
-
+%return
     [H,W,C,M] = size(a);
     [H2,W2,C2] = size(w);
 %    C2与C必须相等
