@@ -23,14 +23,17 @@ function [w,b] = unboxingParameters(wb,L,layerTypes,layerNeruals)
             index = index+I*O;
             b{l} = wb(index+1:index+O);
             index = index+O;
+        else
+            disp(sprintf('未定义的网络层类型 %d',layerTypes(l)))
+            return;
         end;
     end;
-    index
-    size(wb)
-    for l=1:L,
-        size(w{l})
-        size(b{l})
-    end;
+%    index
+%    size(wb)
+%    for l=1:L,
+%        size(w{l})
+%        size(b{l})
+%    end;
 
 
 end
