@@ -11,7 +11,6 @@ function cost = forwardPropagation(x,y,w,b,L,layerTypes,layerNeruals,ps)
     m=size(x,4);
     a=x;
     for l=2:L,
-%        l
         z  = zeros(layerNeruals(l,1),layerNeruals(l,2),layerNeruals(l,3),m);
         if layerTypes(l) == 0,
     %        如果是卷积层
@@ -109,9 +108,23 @@ function cost = forwardPropagation(x,y,w,b,L,layerTypes,layerNeruals,ps)
             disp(sprintf('未定义的网络层类型 %d',layerTypes(l)));
             return;
         end;
+
+%         disp(sprintf('第%d层向前传播得到',l))
+%            z
+%            a
     end;
 
+%    因为最后一层是全连接层，因此一个长度为SL的列向量即可表达所有神经元，如果有m个样本，可用SL*m的矩阵表达
 
+    [SL,s1,s2,m]=size(a);
+    if s1~=1 ||s2~=1 ,
+        disp('检测到非法结果，最后一层神经元必须是SL*1*1*m的结构');
+    end;
+    a = reshape(a,SL,m,1,1);
+
+%    disp('向前传播结束')
+
+% 因此 y也是SL*m的矩阵
     cost = sum(-log(a(find(y==1))))/m;
 
 end;
