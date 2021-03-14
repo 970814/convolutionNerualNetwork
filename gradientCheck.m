@@ -5,8 +5,9 @@ function err = gradientCheck(gw,gb,x,y,w,b,L,layerTypes,layerNeruals,ps)
     err=false;
     if gradientCheck,
 
+        m=size(x,4);
         epsilon = 0.0001;
-        maxErrDiff = 0.0001
+        maxErrDiff = 0.0001;
         wc = 0;
         bc = 0;
         for l = 3:L,
@@ -16,7 +17,7 @@ function err = gradientCheck(gw,gb,x,y,w,b,L,layerTypes,layerNeruals,ps)
             if layerTypes(l) == 3 || layerTypes(l) == 2 || layerTypes(l) == 0,
                 %            检测biases梯度是否正确
                             N = length(b{l});
-                            disp('开始检测 biases')
+                            disp('开始检测 biases');
                             for n=1:N,
                                  b{l}(n)=b{l}(n) + epsilon;
                                  costB = forwardPropagation(x,y,w,b,L,layerTypes,layerNeruals,ps);
@@ -25,10 +26,11 @@ function err = gradientCheck(gw,gb,x,y,w,b,L,layerTypes,layerNeruals,ps)
                                  %                    使用双侧差分求偏导数
                                  pdb = (costB-costA)/(2*epsilon);
                                  if abs(pdb - gb{l}(n)) > epsilon,
-                                     disp(sprintf('偏导数b检测错误在第%d层的第%d个, 期望 %f, 实际是 %f, 差距是 %f',l,n,pdb,gb{l}(n),abs(pdb - gb{l}(n))));
+
+                                     disp(sprintf('偏导数b检测错误在第%d层的第%d个, 期望 %f, 实际是 %f, %f,%f 差距是 %f',l,n,pdb,gb{l}(n),gb{l}(n)/m,gb{l}(n)/m-pdb,abs(pdb - gb{l}(n))));
                 %            当检测到第一个错误时，将停止检测
                                      err=true;
-                                     break;
+%                                     break;
                                  else
                                      bc = bc+1;
                                      disp(sprintf('偏导数b检测正确在第%d层的第%d个, 期望 %f, 实际是 %f, 差距是 %f',l,n,pdb,gb{l}(n),abs(pdb - gb{l}(n))));

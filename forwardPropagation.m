@@ -11,24 +11,21 @@ function cost = forwardPropagation(x,y,w,b,L,layerTypes,layerNeruals,ps)
     m=size(x,4);
     a=x;
     for l=2:L,
-        l
+%        l
         z  = zeros(layerNeruals(l,1),layerNeruals(l,2),layerNeruals(l,3),m);
         if layerTypes(l) == 0,
     %        如果是卷积层
 
     %        C为当前层卷积核的个数
-            C = size(w{l},4)
+            C = size(w{l},4);
 
             for c=1:C,
     %            多张多通道图片 与 3d卷积核 卷积操作
                 z(:,:,c,:) = nnConvolution(a , w{l}(:,:,:,c)) .+ b{l}(c);
 
             end;
-
-            size(z)
             a = nonlinearActivateFunction(z);
 
-%            size(a)
 
         elseif layerTypes(l) == 1,
     %        如果是池化层
@@ -66,24 +63,18 @@ function cost = forwardPropagation(x,y,w,b,L,layerTypes,layerNeruals,ps)
                     z = [z maxV];
                 end;
             end;
-%            disp('size a ')
-%            size(a)
-%            size(z)
             z = reshape(z,r,c,size(t,3),size(t,4));
             a = z;
-%            size(a)
         elseif layerTypes(l) == 2,
     %        如果是全连接层
 %            得到上一层的四维、高、宽、通道数、样本数量
             [H,W,C,M]=size(a);
 %           转换成列向量
             a=reshape(a,H*W*C,1,1,M);
-%            size(a)
 %            加权输入
             z = w{l} * a +b{l};
             z=reshape(z,layerNeruals(l,1),layerNeruals(l,2),layerNeruals(l,3),M);
             a = nonlinearActivateFunction(z);
-%            size(a)
         elseif layerTypes(l) == 3,
     %        如果是softmax输出层,
 
@@ -91,22 +82,19 @@ function cost = forwardPropagation(x,y,w,b,L,layerTypes,layerNeruals,ps)
                 %    如果上一层不是全连接层，则需要变换成列向量
 
     %            得到上一层的四维、高、宽、通道数、样本数量
-                [H,W,C,M]=size(a)
+                [H,W,C,M]=size(a);
     %           转换成列向量
                 a=reshape(a,H*W*C,1,1,M);
-                size(a)
     %            加权输入
                 z = w{l} * a +b{l};
 
             else
 %                如果上一层是全连接层
                  z = w{l} * a +b{l};
-%                 size(z)
             end;
             z=reshape(z,layerNeruals(l,1),layerNeruals(l,2),layerNeruals(l,3),M);
 %           softmax 映射转换成概率分布
 %            z 是typeCount*m的矩阵
-%            z
 % 由于指数可能会输出一个inf，因此需要做归一化
 %max(z)
 %            z = z - max(z)   该归一化不好，
@@ -122,11 +110,7 @@ function cost = forwardPropagation(x,y,w,b,L,layerTypes,layerNeruals,ps)
             return;
         end;
     end;
-%    a
-%size(a)
 
-%    a
-%    y
 
     cost = sum(-log(a(find(y==1))))/m;
 

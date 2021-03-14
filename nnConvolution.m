@@ -16,8 +16,8 @@ function [z] = nnConvolution(a,w)
 %   而我们期待的是a1 * w1+ ...+ ai * wi+ ...+ aj * wj + ...+ ak * wk+... + an * wn,
 %    z = convn(a,rot90(w,2),'valid');
 
-    [H,W,C,M] = size(a)
-    [H2,W2,C2] = size(w)
+    [H,W,C,M] = size(a);
+    [H2,W2,C2] = size(w);
 %    C2与C必须相等
     if C2 ~= C,
         disp(sprintf('卷积核的通道数必须与输入的通道数相同 %d!=%d',C2,C));
@@ -30,9 +30,9 @@ function [z] = nnConvolution(a,w)
                 z(:,:,1,k) = z(:,:,1,k) .+ conv2(a(:,:,j,k),rot90(w(:,:,j),2),'valid');
             end;
         end;
-        size(z)
-        v(:,:,1,:)=z
-        v=z
+%        size(z)
+%        v(:,:,1,:)=z
+%        v=z
     end;
 
 end;

@@ -9,8 +9,6 @@ function [cost,gw,gb] = backPropagation(x,y,w,b,L,layerTypes,layerNeruals,ps)
 %    layerNeruals 记录了每层的神经元个数
 %    ps 记录每层的池化大小
 
-
-disp('start')
 % 记录样本个数
     m=size(x,4);
 %  先进行向前传播算法
@@ -172,23 +170,16 @@ disp('start')
     Delta{L} = a{L}-y;
 
 %a{L}
-444
-    a{L}
-    Delta{L}
     for l=(L-1):-1:2,
-        l
 %        Delta{l} = zeros(size(z{l}))
         if layerTypes(l+1) == 3 || layerTypes(l+1) == 2,
 %            如果当前层的下一层是softxmax或全连接层，
             Delta{l} = (w{l+1}' * Delta{l+1});
-            1223
-            size(w{l+1})
-            size(Delta{l+1})
 %           暂不考虑当前隐藏层为softmax层的情况，
 %            z{l}保留了层的结构，例如为池化层时，结构是多维数组，全连接层时，为2维矩阵
 %           但计算出的Delta{l}默认为2维矩阵结构，因此需要相应的将Delta{l}转换成当前层的结构。
 %           因此计算z的4维
-            [H,W,C,M]=size(z{l})
+            [H,W,C,M]=size(z{l});
             Delta{l} = reshape(Delta{l},H,W,C,M);
             if layerTypes(l) ~= 1,
 %                如果当前层不是池化层，则需要乘以激活函数的导数，否则池化层激活函数为f(x)=x,导数为1，不必乘。
@@ -316,7 +307,7 @@ disp('start')
         elseif layerTypes(l) == 0,
 %             如果当前层为卷积层
 %            获取当前误差的四维
-            [H,W,C,M] = size(Delta{l})
+            [H,W,C,M] = size(Delta{l});
 
 
 %                计算C个偏置项梯度
@@ -329,7 +320,7 @@ disp('start')
             end;
 
 %           计算卷积核的4维,C2维卷积核的通道数，M2为卷积核的个数
-            [H2,W2,C2,M2] = size(w{l})
+            [H2,W2,C2,M2] = size(w{l});
 
 
 
@@ -340,7 +331,6 @@ disp('start')
 %                   计算第i个卷积核的第j片梯度,
                     gw{l}(:,:,j,i) = zeros(H2,W2);
 %                    计算k个样本梯度的平均值
-                    m
                     for k=1:m,
 %                        进行二维卷积操作
                         gw{l}(:,:,j,i) =gw{l}(:,:,j,i) + nnConvolution(a{l-1}(:,:,j,k),Delta{l}(:,:,i,k));
@@ -358,8 +348,7 @@ disp('start')
         end;
     end;
 
-
-    AL = a{L}
+%    AL = a{L}
 %    for l =1:L,
 %        l
 %        size(gw{l})

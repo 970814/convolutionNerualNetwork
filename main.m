@@ -5,7 +5,7 @@ close all;
 % -1 代表输入层，0代表卷积层，1代表池化层，2代表全连接层，3代表softmax输出层
 layerTypes   = [-1,        0,    3 ]
 % 网络每层神经元的规模
-layerNeruals = [2,2,8;   1,1,1;  6,1,1]
+layerNeruals = [1,1,1;   1,1,1;  6,1,1]
 %[12288   36000    9000   13520    3380     200       6]
 
 %池化区域大小
@@ -46,7 +46,6 @@ for l=2:L,
 end;
 %wb= rand(n,1);
 size(wb)
-n
 
 %% 共享权重、过滤器、卷积核
 %w{2} = rand(5,5,3,10);
@@ -70,7 +69,7 @@ n
 %载入训练集
 [X,Y,types] = loadFingerTrainData(1);
 
-m=length(Y)
+m=length(Y);
 % 数据归一化
 % 将unit8转换成0～1之间的double
 x = im2double(X);
@@ -86,8 +85,8 @@ end;
 
 %x =rand(1,1,2,1);
 
-x=rand(2,2,8,2);
-y = [y y]
+x=rand(1,1,1,1);
+%y = [y y]
 
 %save wb.txt wb
 %save x.txt x
