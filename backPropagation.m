@@ -17,12 +17,12 @@ function [cost,gw,gb] = backPropagation(x,y,w,b,L,layerTypes,layerNeruals,ps)
 %    用于记录 最大池化 前 最大值的位置
     maxPoolingLocation={};
     for l=2:L,
-        z{l}  = zeros(layerNeruals(l,1),layerNeruals(l,2),layerNeruals(l,3),m);
         if layerTypes(l) == 0,
     %        如果是卷积层
 
     %        C为当前层卷积核的个数
             C = size(w{l},4);
+            z{l}  = zeros(layerNeruals(l,1),layerNeruals(l,2),layerNeruals(l,3),m);
 
             for c=1:C,
     %            多张多通道图片 与 3d卷积核 卷积操作
@@ -67,22 +67,6 @@ function [cost,gw,gb] = backPropagation(x,y,w,b,L,layerTypes,layerNeruals,ps)
                             maxV(:,:,s2,s1) = [V];
                         end;
                     end;
-%                    size(maxV)
-%                    size(mpl)
-
-
-%                    转换乘 1维度的列向量，计算最大值和最大值的位置
-%                    t = reshape(t,ps{l}(1)*ps{l}(2),1, size(t,3), size(t,4));
-%                    9
-%                    t
-%
-%                    max(t,1)
-%                    [maxV,maxIndex]=max(t);
-
-
-%                    将最大值的位置变换成2维度的,并记录最大池化的原位置
-%                    mpl=[mod(maxIndex-1,ps{l}(1))+1,floor((maxIndex-1)/ps{l}(1))+1];
-
 
 
 %                    将池化结果合并
@@ -338,11 +322,10 @@ function [cost,gw,gb] = backPropagation(x,y,w,b,L,layerTypes,layerNeruals,ps)
 %1 1 1 720
 
 
-            l
             at = a{l-1};
 %            如果上一层是全连接层，则结构不需要改变，否则需要转换成2维矩阵结构
             if layerTypes(l-1) ~= 2 && layerTypes(l-1) ~= 3
-                [H,W,C,M]=size(a{l-1})
+                [H,W,C,M]=size(a{l-1});
                 at = reshape(a{l-1},H*W*C,M,1,1);
             end;
 %            计算相应的梯度

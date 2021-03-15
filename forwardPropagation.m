@@ -11,12 +11,20 @@ function cost = forwardPropagation(x,y,w,b,L,layerTypes,layerNeruals,ps)
     m=size(x,4);
     a=x;
     for l=2:L,
-        z  = zeros(layerNeruals(l,1),layerNeruals(l,2),layerNeruals(l,3),m);
+
+
+        % -1 代表输入层，0代表卷积层，1代表池化层，2代表全连接层，3代表softmax输出层
+%        layerTypes   = [-1,        0,     1          2      3 ]
+        % 网络每层神经元的规模
+%        layerNeruals = [6,6,3;   4,4,6;  2,2,6;      5,1,1;  6,1,1]
+
+
         if layerTypes(l) == 0,
     %        如果是卷积层
 
     %        C为当前层卷积核的个数
             C = size(w{l},4);
+            z  = zeros(layerNeruals(l,1),layerNeruals(l,2),layerNeruals(l,3),m);
 
             for c=1:C,
     %            多张多通道图片 与 3d卷积核 卷积操作
@@ -30,6 +38,7 @@ function cost = forwardPropagation(x,y,w,b,L,layerTypes,layerNeruals,ps)
     %        如果是池化层
             r = layerNeruals(l,1);
             c = layerNeruals(l,2);
+            z=[];
     %  默认采用最大池化，
             for j=1:c,
                 for i=1:r,
@@ -63,7 +72,10 @@ function cost = forwardPropagation(x,y,w,b,L,layerTypes,layerNeruals,ps)
                 end;
             end;
             z = reshape(z,r,c,size(t,3),size(t,4));
+
+
             a = z;
+
         elseif layerTypes(l) == 2,
     %        如果是全连接层
 %            得到上一层的四维、高、宽、通道数、样本数量
