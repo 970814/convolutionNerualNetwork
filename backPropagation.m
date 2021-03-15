@@ -184,11 +184,6 @@ function [cost,gw,gb] = backPropagation(x,y,w,b,L,layerTypes,layerNeruals,ps)
 %    z
 
 %    z
-% -1 代表输入层，0代表卷积层，1代表池化层，2代表全连接层，3代表softmax输出层
-%layerTypes   = [-1,        0,    2      3 ]
-% 网络每层神经元的规模
-%layerNeruals = [1,1,1;   1,1,1; 1,1,1;  2,1,1]
-%[12288   36000    9000   13520    3380     200       6]
 
 %    进行反向传播算法
 %   默认最后一层为softmax层，所以最后一层的误差为
@@ -335,11 +330,23 @@ function [cost,gw,gb] = backPropagation(x,y,w,b,L,layerTypes,layerNeruals,ps)
 
 % gw{l}
 % gb{l}
+% -1 代表输入层，0代表卷积层，1代表池化层，2代表全连接层，3代表softmax输出层
+%layerTypes   = [-1,        0,    2      3 ]
+% 网络每层神经元的规模
+%layerNeruals = [1,1,3;   1,1,2; 1,1,1;  6,1,1]
+%6*720
+%1 1 1 720
 
-            size( Delta{l})
-            size(a{l-1})
+
+            l
+            at = a{l-1};
+%            如果上一层是全连接层，则结构不需要改变，否则需要转换成2维矩阵结构
+            if layerTypes(l-1) ~= 2 && layerTypes(l-1) ~= 3
+                [H,W,C,M]=size(a{l-1})
+                at = reshape(a{l-1},H*W*C,M,1,1);
+            end;
 %            计算相应的梯度
-            gw{l} = Delta{l} * a{l-1}' ./ m;
+            gw{l} = Delta{l} * at' ./ m;
 
 %1,1,3,720
 %1,1,2,720
