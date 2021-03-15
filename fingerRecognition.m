@@ -3,9 +3,9 @@ function fingerRecognition()
     close all;
 
     % -1 代表输入层，0代表卷积层，1代表池化层，2代表全连接层，3代表softmax输出层
-    layerTypes   = [-1,         0,           1              0             1               2           3]
+    layerTypes   = [-1,            0,           1              0             1              3]
     % 网络每层神经元的规模
-    layerNeruals = [64,64,3;   60,60,8;     30,30,8;      26,26,16;     13,13,16;        10,1,1;    6,1,1]
+    layerNeruals = [64,64,3;     50,50,6;     25,25,6;      10,10,10;     5,5,10;         6,1,1]
     %池化区域大小
     ps{3}=[1,1];
     ps{5}=[2,2];
@@ -33,6 +33,8 @@ function fingerRecognition()
 
 
     start = time();
+%    记录了每次迭代的cost
+    costs =[];
 %    记录了每个epoth后整个训练样本的cost
     USCosts=[];
 %    记录了每个epoth后整个测试样本的cost
@@ -44,7 +46,7 @@ function fingerRecognition()
      % 为fmincg高级优化函数设置参数
     options = optimset('MaxIter', 1);
     % 训练批次
-    epoths = 50;
+    epoths = 8;
     % 迷你训练批次大小,总训练集大小为1080 = 4*9*3*5*2
     miniBatchSize = 10;
     betterWB = wb;
@@ -53,6 +55,7 @@ function fingerRecognition()
         t0=time();
         disp(sprintf('开始第%d个epoth',e));
         for i = 1:length(seg),
+            t1=time();
     %         使用全局变量 的迷你训练批次 x
             global trainSet;
             global trainY;
@@ -63,14 +66,17 @@ function fingerRecognition()
              % 高级优化算法寻找局部最优解
             [betterWB, cost, info] = ...
             	fmincg(@(t)costFunction(t), betterWB, options);
+            costs = [costs cost];
+            ct= time()-t1;
+            disp(sprintf('本次迭代花费时间%f',ct));
         end;
         disp(sprintf('第%d个epoth结束',e));
-        [w,b] = unboxingParameters(wb,L,layerTypes,layerNeruals);
+        [bw,bb] = unboxingParameters(betterWB,L,layerTypes,layerNeruals);
      %    每个epoth 后，计算在整个训练样本上的cost
-        USCost =forwardPropagation(x,y,w,b,L,layerTypes,layerNeruals,ps)
+        USCost =forwardPropagation(x,y,bw,bb,L,layerTypes,layerNeruals,ps)
         USCosts=[USCosts USCost];
     %    每个epoth 后，计算在整个测试样本上的cost
-        testCost =forwardPropagation(testx,testy,w,b,L,layerTypes,layerNeruals,ps)
+        testCost =forwardPropagation(x,y,bw,bb,L,layerTypes,layerNeruals,ps)
         testCosts=[testCosts testCost];
 
 
