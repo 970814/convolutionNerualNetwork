@@ -17,23 +17,7 @@ ps{7}=[3,3];
 L = length(layerTypes);
 
 
-%载入训练集
-[X,Y,types] = loadFingerTrainData(1);
-
-m=length(Y);
-% 数据归一化
-% 将unit8转换成0～1之间的double
-x = im2double(X);
-
-
-% 将y转换成向量形式
-y = zeros(length(types),m);
-
-for i =1:m,
-    y(Y(i)+1,i)=1;
-end;
-
-m=2;
+m=1;
 
 x =rand(28,28,5,m);
 y=perms([1 0 0 0 0 0])'(:,[1:m]);

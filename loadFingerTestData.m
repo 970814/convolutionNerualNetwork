@@ -1,12 +1,12 @@
-function [x,y,Y,list_classes] = loadFingerTrainData(maxSize)
+function [x,y,Y,list_classes] = loadFingerTestData(maxSize)
 
     %载入数据
-    load('../dataSets/fingers/train_signs.h5');
-    m = min(maxSize,size(train_set_x,4));
+    load('../dataSets/fingers/test_signs.h5');
+    m = min(maxSize,size(test_set_x,4));
 %    至少导入2条数据，不然数据格式会变成列向量
     m =max(2,m);
     %转换成我们想要的格式数据，高*宽*通道数*图片数量
-    B(:,:,:,[1:m])=train_set_x(:,:,:,[1:m]);
+    B(:,:,:,[1:m])=test_set_x(:,:,:,[1:m]);
 
     A(:,:,1,:) = B(1,:,:,:);
     A(:,:,2,:) = B(2,:,:,:);
@@ -19,7 +19,7 @@ function [x,y,Y,list_classes] = loadFingerTrainData(maxSize)
 
     % 数据归一化,将unit8转换成0～1之间的double
     x = im2double(X);
-    Y = train_set_y([1:m]);
+    Y = test_set_y([1:m]);
 
 
 
