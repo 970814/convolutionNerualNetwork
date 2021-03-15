@@ -25,14 +25,10 @@ function [z] = nnConvolution(a,w)
         z = zeros(H-H2+1,W-W2+1,1,M);
         for k =1:M,
 %          产生的结果是二维的
-%            z(:,:,1,k) = zeros(H-H2+1,W-W2+1);
             for j = 1:C,
                 z(:,:,1,k) = z(:,:,1,k) .+ conv2(a(:,:,j,k),rot90(w(:,:,j),2),'valid');
             end;
         end;
-%        size(z)
-%        v(:,:,1,:)=z
-%        v=z
     end;
 
 end;

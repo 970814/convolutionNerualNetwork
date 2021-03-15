@@ -7,16 +7,9 @@ function cost = forwardPropagation(x,y,w,b,L,layerTypes,layerNeruals,ps)
 %    layerNeruals 记录了每层的神经元个数
 %    ps 记录每层的池化大小
 
-%    [H,W,C,M]=size(x)
     m=size(x,4);
     a=x;
     for l=2:L,
-
-
-        % -1 代表输入层，0代表卷积层，1代表池化层，2代表全连接层，3代表softmax输出层
-%        layerTypes   = [-1,        0,     1          2      3 ]
-        % 网络每层神经元的规模
-%        layerNeruals = [6,6,3;   4,4,6;  2,2,6;      5,1,1;  6,1,1]
 
 
         if layerTypes(l) == 0,
@@ -107,23 +100,17 @@ function cost = forwardPropagation(x,y,w,b,L,layerTypes,layerNeruals,ps)
 %           softmax 映射转换成概率分布
 %            z 是typeCount*m的矩阵
 % 由于指数可能会输出一个inf，因此需要做归一化
-%max(z)
-%            z = z - max(z)   该归一化不好，
 %             z = z ./ max(z);
             t = e.^(z);
 
 
 %            归一化
             a = t ./ sum(t,1);
-%            size(a)
         else
             disp(sprintf('未定义的网络层类型 %d',layerTypes(l)));
             return;
         end;
 
-%         disp(sprintf('第%d层向前传播得到',l))
-%            z
-%            a
     end;
 
 %    因为最后一层是全连接层，因此一个长度为SL的列向量即可表达所有神经元，如果有m个样本，可用SL*m的矩阵表达
@@ -134,7 +121,6 @@ function cost = forwardPropagation(x,y,w,b,L,layerTypes,layerNeruals,ps)
     end;
     a = reshape(a,SL,m,1,1);
 
-%    disp('向前传播结束')
 
 % 因此 y也是SL*m的矩阵
     cost = sum(-log(a(find(y==1))))/m;

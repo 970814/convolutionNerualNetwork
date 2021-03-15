@@ -75,26 +75,18 @@ function [cost,gw,gb] = backPropagation(x,y,w,b,L,layerTypes,layerNeruals,ps)
 
                 end;
             end;
-%            disp('maxPoolingLocation')
-%            size(maxPoolingLocation{l})
-
-
             z{l} = reshape(zt,r,c,size(t,3),size(t,4));
-%             size( z{l})
             a{l} = z{l};
         elseif layerTypes(l) == 2,
     %        如果是全连接层
 %            得到上一层的四维、高、宽、通道数、样本数量，默认认为上层为池化层或卷积层
-%            disp('heeee')
             [H,W,C,M]=size(a{l-1});
 %           转换成列向量
             at = reshape(a{l-1},H*W*C,1,1,M);
 
-%            size(at)
 %            加权输入
             z{l} = w{l} * at +b{l};
             z{l}=reshape(z{l},layerNeruals(l,1),layerNeruals(l,2),layerNeruals(l,3),M);
-%            size(z{l})
             a{l} = nonlinearActivateFunction(z{l});
         elseif layerTypes(l) == 3,
     %        如果是softmax输出层,
@@ -106,7 +98,6 @@ function [cost,gw,gb] = backPropagation(x,y,w,b,L,layerTypes,layerNeruals,ps)
                 [H,W,C,M]=size(a{l-1});
     %           转换成列向量
                 at=reshape(a{l-1},H*W*C,1,1,M);
-%                size(at)
     %            加权输入
                 z{l} = w{l} * at +b{l};
 
@@ -117,9 +108,7 @@ function [cost,gw,gb] = backPropagation(x,y,w,b,L,layerTypes,layerNeruals,ps)
             z{l}=reshape(z{l},layerNeruals(l,1),layerNeruals(l,2),layerNeruals(l,3),M);
 %           softmax 映射转换成概率分布
 %            z 是typeCount*m的矩阵
-%            z{l}
 % 由于指数可能会输出一个inf，因此需要做归一化
-%max(z)
 %            z{l} = z{l} ./ max(z{l});
             t = e.^(z{l});
 
@@ -148,59 +137,33 @@ function [cost,gw,gb] = backPropagation(x,y,w,b,L,layerTypes,layerNeruals,ps)
         end;
     end;
 
-%a
 
 
-%    a{L}
 
-%    y
-%    m为样本数量
-%    m=size(a{L},4);
     cost = sum(-log(a{L}(find(y==1))))/m;
 
-%    for l =1:L,
-%        size(z{l})
-%        size(a{l})
-%    end;
-
-
-%    a
-%    z
-
-%    z
 
 %    进行反向传播算法
 %   默认最后一层为softmax层，所以最后一层的误差为
     Delta{L} = a{L}-y;
-%disp('第L层的误差');
-% Delta{L}
-%a{L}
+
     for l=(L-1):-1:2,
-%        Delta{l} = zeros(size(z{l}))
         if layerTypes(l+1) == 3 || layerTypes(l+1) == 2,
 %            如果当前层的下一层是softxmax或全连接层，
-%            disp('here')
-%            l+1
-%            w{l+1}'
-%            Delta{l+1}
+
             Delta{l} = (w{l+1}' * Delta{l+1});
-%            Delta{l}
 %           暂不考虑当前隐藏层为softmax层的情况，
 %            z{l}保留了层的结构，例如为池化层时，结构是多维数组，全连接层时，为2维矩阵
 %           但计算出的Delta{l}默认为2维矩阵结构，因此需要相应的将Delta{l}转换成当前层的结构。
 %           因此计算z的4维
             if layerTypes(l) == 3 || layerTypes(l) == 2,
 %                如果当前层为全连接层，则结构不需要改变
-%                 disp('not change')
             else
-%                disp('change')
                 [H,W,C,M]=size(z{l});
                 Delta{l} = reshape(Delta{l},H,W,C,M);
             end;
 
             if layerTypes(l) ~= 1,
-%                disp('change')
-%                size(derNonLinActFun(z{l}))
 
 %                如果当前层不是池化层，则需要乘以激活函数的导数，否则池化层激活函数为f(x)=x,导数为1，不必乘。
 %                此时 Delta{l} 与z{l} 有相同结构，可以做hadamard product
@@ -224,18 +187,15 @@ function [cost,gw,gb] = backPropagation(x,y,w,b,L,layerTypes,layerNeruals,ps)
 %                每个通道
                 for s2 =1:C,
 %                    进行unsample 操作
-%                    disp('start')
                     for w2 = 1:W2,
                         for h2 = 1:H2,
 %                           将池化层元素位置还原到上一层卷积层相应元素起始位置上,然后根据最大元素位置定位
-%                            (w2-1)*H2+h2
                             s3 = (h2-1)*ps{l+1}(1)+mpl((w2-1)*H2+h2,1,s2,s1);
                             s4 = (w2-1)*ps{l+1}(2)+mpl((w2-1)*H2+h2,2,s2,s1);
 %                           修复池化层反向传播的bug，遗漏了a关于z的偏导数项
                             Delta{l}(s3,s4,s2,s1) = Delta{l+1}(h2,w2,s2,s1) .* derNonLinActFun(z{l}(s3,s4,s2,s1));
                         end;
                     end;
-%                     disp('end')
                 end;
             end;
 
@@ -275,53 +235,17 @@ function [cost,gw,gb] = backPropagation(x,y,w,b,L,layerTypes,layerNeruals,ps)
                     end;
                 end;
             end;
-%            size(Delta{l+1})
-%            size(Delta{l})
         else
             disp(sprintf('未定义的网络层类型 %d',layerTypes(l)));
             return;
         end;
     end;
 
-%Delta
-%    for l =1:L,
-%        size(Delta{l})
-%    end;
 
 %    计算梯度
     for l=2:L,
         if layerTypes(l) == 3 || layerTypes(l) == 2,
 %            如果当前层是softxmax或全连接层，
-
-%            [H,W,C,M]=size(a{l-1});
-%           转换成列向量
-%            at = reshape(a{l-1},H*W*C,1,1,M);
-
-%            l
-%            size(at)
-%           size(Delta{l})
-%at
-%Delta{l}
-%           gw{l}  =zeros(size(Delta{l},1),size(at,1));
-%           gb{l}  =zeros(size(Delta{l},1),1);
-%           for i =1:M,
-%%                Delta{l}(:,:,1,i)
-%%               at(:,:,1,i)'
-%               gw{l} = gw{l} + Delta{l}(:,:,1,i) * at(:,:,1,i)';
-%               gb{l}  = gb{l} + Delta{l}(:,:,1,i);
-%           end;
-%           gw{l} = gw{l} ./ m;
-%           gb{l} = gb{l} ./ m;
-
-% gw{l}
-% gb{l}
-% -1 代表输入层，0代表卷积层，1代表池化层，2代表全连接层，3代表softmax输出层
-%layerTypes   = [-1,        0,    2      3 ]
-% 网络每层神经元的规模
-%layerNeruals = [1,1,3;   1,1,2; 1,1,1;  6,1,1]
-%6*720
-%1 1 1 720
-
 
             at = a{l-1};
 %            如果上一层是全连接层，则结构不需要改变，否则需要转换成2维矩阵结构
@@ -332,15 +256,6 @@ function [cost,gw,gb] = backPropagation(x,y,w,b,L,layerTypes,layerNeruals,ps)
 %            计算相应的梯度
             gw{l} = Delta{l} * at' ./ m;
 
-%1,1,3,720
-%1,1,2,720
-%2*720
-%
-%1,1,1,720
-%1*720
-%            disp(sprintf('%d层的delta',l))
-%            a{l-1}
-%            Delta{l}
 
             gb{l} = sum(Delta{l},2) ./ m;
         elseif  layerTypes(l) == 1,
@@ -375,10 +290,6 @@ function [cost,gw,gb] = backPropagation(x,y,w,b,L,layerTypes,layerNeruals,ps)
                     for k=1:m,
 %                        进行二维卷积操作
                         gw{l}(:,:,j,i) =gw{l}(:,:,j,i) + nnConvolution(a{l-1}(:,:,j,k),Delta{l}(:,:,i,k));
-%                        gw{l}(:,:,j,i) =gw{l}(:,:,j,i) + conv2(a{l-1}(:,:,j,k),rot90(Delta{l}(:,:,i,k),2),'valid');
-%                        gw{l}(:,:,j,i) =conv2(a{l-1}(:,:,j,k),rot90(Delta{l}(:,:,i,k),2),'valid');
-%                        AAA=a{l-1}(:,:,j,k)
-%                        BBB= rot90(Delta{l}(:,:,i,k),2)
                     end;
                     gw{l}(:,:,j,i) = gw{l}(:,:,j,i) ./ m;
                 end;
@@ -389,25 +300,8 @@ function [cost,gw,gb] = backPropagation(x,y,w,b,L,layerTypes,layerNeruals,ps)
         end;
     end;
 
-
-%gw
-%gb
-%    AL = a{L}
-%    for l =1:L,
-%        l
-%        size(gw{l})
-%        size(gb{l})
-%    end;
-%gw
 end;
 
 
 
-
-%开始检测卷积层 weights
-%卷积层w偏导数检测错误在第2层的第1个卷积核的第1片的第1行第1列, 期望 0.027154, 实际是 0.000000, 差距是 0.027154
-%检测到梯度计算错误
-%卷积层w偏导数检测错误在第2层的第1个卷积核的第2片的第1行第1列, 期望 0.000000, 实际是 0.027154, 差距是 0.027154
-
-%[-1.7871 , 0.9451]*[-0.9922  -0.9922; 0.9922   0.9922]
 
