@@ -240,14 +240,10 @@ function [cost,gw,gb] = backPropagation(x,y,w,b,L,layerTypes,layerNeruals,ps)
             end;
 
 
-%            Delta{l}(:,:,2,2)
-%            Delta{l+1}(:,:,2,2)
-%            a{l}(:,:,2,2)
-%            disp('end2')
+
         elseif layerTypes(l+1) == 0,
 
 
-            disp('never happen')
 %            如果当前层的下一层是卷积层，
 
 
@@ -258,7 +254,6 @@ function [cost,gw,gb] = backPropagation(x,y,w,b,L,layerTypes,layerNeruals,ps)
 %           统计有多少个卷积核
             featureMapCount = size(w{l+1},4);
 
-%            disp('here')
 
 
 %           考虑每一片误差
@@ -270,7 +265,13 @@ function [cost,gw,gb] = backPropagation(x,y,w,b,L,layerTypes,layerNeruals,ps)
                     for i=1:featureMapCount,
 %                此时定义就为数学上的全卷积操作，旋转360度等于没转
 %                2维全卷积操作
-                        Delta{l}(:,:,j,k) =Delta{l}(:,:,j,k) + (conv2(Delta{l+1}(:,:,i,k),w{l+1}(:,:,j,i),'full') .* derNonLinActFun(z{l}(:,:,j,k)));
+                        td = conv2(Delta{l+1}(:,:,i,k),w{l+1}(:,:,j,i),'full');
+                        if layerTypes(l) ~= 1,
+%                            如果将卷积层误差传播到池化层，那么激活函数不存在或导数为1，
+                            td = td.* derNonLinActFun(z{l}(:,:,j,k));
+                        end
+
+                        Delta{l}(:,:,j,k) =Delta{l}(:,:,j,k) + td;
                     end;
                 end;
             end;

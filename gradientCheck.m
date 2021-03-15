@@ -1,13 +1,13 @@
 function err = gradientCheck(gw,gb,x,y,w,b,L,layerTypes,layerNeruals,ps)
 
 %   梯度检测
-    gradientCheck = true;
+    gradientCheck = false;
     err=false;
     if gradientCheck,
 
         m=size(x,4);
         disp(sprintf('本次检测的样本数量为%d',m));
-        epsilon = 0.001;
+        epsilon = 0.0001;
         maxErrDiff = 0.0001;
         wc = 0;
         bc = 0;
