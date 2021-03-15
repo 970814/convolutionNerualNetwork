@@ -2,19 +2,11 @@ clear all;
 close all;
 
 
-
-
 % -1 代表输入层，0代表卷积层，1代表池化层，2代表全连接层，3代表softmax输出层
-%layerTypes   = [-1,         0,           1              0          1               2      3 ]
+layerTypes   = [-1,         0,           1              0             1               2      3 ]
 % 网络每层神经元的规模
-%layerNeruals = [28,28,5;   28,28,10;     28,28,6;       4,4,12;      2,2,12;           5,1,1;  6,1,1]
+layerNeruals = [28,28,5;   24,24,10;     12,12,10;      10,10,20;    5,5,20;      5,1,1;   6,1,1]
 %[12288   36000    9000   13520    3380     200       6]
-
-layerTypes   = [-1,         0,           1                 0          1             0          1           2         3 ]
-layerNeruals = [24,24,5;   20,20,10;     20,20,10;     18,18,20;      9,9,20;       9,9,40;   3,3,40;    3,1,1;     6,1,1]
-
-%   0,      1,
-%   4,4,12;  2,2,12;
 
 %池化区域大小
 ps{3}=[1,1];
@@ -22,59 +14,9 @@ ps{5}=[2,2];
 ps{7}=[3,3];
 
 %网络层数
-L = length(layerTypes)
+L = length(layerTypes);
 
 
-
-wb=[];
-%计算参数总数量
-n=0;
-for l=2:L,
-    if layerTypes(l) == 0,
-%        计算卷积层参数数量
-        H = layerNeruals(l-1,1) - layerNeruals(l,1)+1;
-        W = layerNeruals(l-1,2) - layerNeruals(l,2)+1;
-        c1 = layerNeruals(l-1,3);
-        c2 = layerNeruals(l,3);
-        n =n+ H*W*c1*c2 + c2;
-%         使用方差为 1/H*W*c1 的高斯分布生成w，方差为1 的高斯分布生成b
-        wb=  [wb; 1/sqrt(H*W*c1) * randn(H*W*c1*c2,1) ;randn(c2,1)];
-    elseif layerTypes(l) == 1,
-%            池化层忽略
-    elseif layerTypes(l) == 2 || layerTypes(l) == 3,
-%           计算全连接层参数数量
-        I=layerNeruals(l-1,1)*layerNeruals(l-1,2)*layerNeruals(l-1,3);
-        O=layerNeruals(l,1);
-        n=n+I*O+O;
-%         使用方差为 1/I 的高斯分布生成w，方差为1 的高斯分布生成b
-        wb = [wb;1/sqrt(I) * randn(I*O,1) ;randn(O,1)];
-    else
-        disp(sprintf('未定义的网络层类型 %d',layerTypes(l)))
-        return;
-    end;
-end;
-%wb= rand(n,1);
-size(wb)
-%wb=[  -1.5714,-0.7666, 0.7821,-0.7339,-2.7703,-0.1939]';
-%% 共享权重、过滤器、卷积核
-%w{2} = rand(5,5,3,10);
-%b{2} = rand(10,1);
-%w{4} = rand(5,5,10,20);
-%b{4} = rand(20,1);
-%
-
-%
-%
-%
-%
-%% 全连接层的参数
-%w{6} = rand(200,3380);
-%b{6} = rand(200,1);
-%w{7} = rand(6,200);
-%b{7} = rand(6,1);
-
-
-%向前传播算法
 %载入训练集
 [X,Y,types] = loadFingerTrainData(1);
 
@@ -82,7 +24,6 @@ m=length(Y);
 % 数据归一化
 % 将unit8转换成0～1之间的double
 x = im2double(X);
-
 
 
 % 将y转换成向量形式
@@ -94,59 +35,19 @@ end;
 
 m=2;
 
-x =rand(24,24,5,m);
+x =rand(28,28,5,m);
 y=perms([1 0 0 0 0 0])'(:,[1:m]);
-%x =rand(1,1,2,1);
 
 
-%x=rand(1,1,1,1)
-%x = 0.2233;
-%x=zeros(1,1,1,2);
-%x (1,1,1,1)=0.2233;
-%x (1,1,1,2)=0.2233;
-%x
-%y = [y y]
-%y=[1 1;0 0 ];
-
-%save wb.txt wb
-%save x.txt x
-%load wb.txt
-%
-%x3 = x;
-%x3(:,:,1,:)=x;
-%x3(:,:,2,:)=x;
-%x=x3
-
-%x =rand(4,4,2,1)
-%x2 = x;
-%x(:,:,:,1) = x2;
-%x(:,:,:,2) = x2;
-%x
-
-
-%y2 = y;
-%y(:,:,:,1) = y2;
-%y(:,:,:,2) = y2;
-
-
-
+wb = initializeParameters(L,layerTypes,layerNeruals);
 
 [w,b] = unboxingParameters(wb,L,layerTypes,layerNeruals);
-%相应的增加了x的数量，也需要相应的增加y数量
 
-
-
-%w
 forwardPropagation(x,y,w,b,L,layerTypes,layerNeruals,ps)
-%backPropagation(x,y,L,w,b,layerTypes,layerNeruals,ps)
 
 cnnCostAndGradient(x,y,wb,L,layerTypes,layerNeruals,ps)
 
 
-
-
-
-%testNnConvolution();
 
 
 
