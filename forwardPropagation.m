@@ -119,6 +119,9 @@ function cost = forwardPropagation(x,y,w,b,L,layerTypes,layerNeruals,ps)
     if s1~=1 ||s2~=1 ,
         disp('检测到非法结果，最后一层神经元必须是SL*1*1*m的结构');
     end;
+
+
+
     a = reshape(a,SL,m,1,1);
 
 
