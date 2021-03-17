@@ -9,6 +9,8 @@ function [cost,gw,gb] = backPropagation(x,y,w,b,L,layerTypes,layerNeruals,ps)
 %    layerNeruals 记录了每层的神经元个数
 %    ps 记录每层的池化大小
 
+    t0 = time();
+
 % 记录样本个数
     m=size(x,4);
 %  先进行向前传播算法
@@ -17,6 +19,8 @@ function [cost,gw,gb] = backPropagation(x,y,w,b,L,layerTypes,layerNeruals,ps)
 %    用于记录 最大池化 前 最大值的位置
     maxPoolingLocation={};
     for l=2:L,
+        t0t0=time();
+
         if layerTypes(l) == 0,
     %        如果是卷积层
 
@@ -46,8 +50,9 @@ function [cost,gw,gb] = backPropagation(x,y,w,b,L,layerTypes,layerNeruals,ps)
                     mpl=[];
                     maxV=[];
 
-
+%                    定位每个样本
                     for s1 =  1:size(t,4),
+%                        定位每一片
                         for s2 =1: size(t,3),
 
                             maxIndexR=-1;
@@ -119,8 +124,16 @@ function [cost,gw,gb] = backPropagation(x,y,w,b,L,layerTypes,layerNeruals,ps)
             disp(sprintf('未定义的网络层类型 %d',layerTypes(l)))
             return;
         end;
+
+        t0t1=time();
+
+       disp(sprintf('向前传播第%d层传递到%d层花费时间%d',l-1,l,t0t1-t0t0));
     end;
 
+
+     t1 = time();
+
+     disp(sprintf('向前传播 %d',t1-t0));
 %    因为最后一层是全连接层，因此一个长度为SL的列向量即可表达所有神经元，如果有m个样本，可用SL*m的矩阵表达
 
 
@@ -138,16 +151,19 @@ function [cost,gw,gb] = backPropagation(x,y,w,b,L,layerTypes,layerNeruals,ps)
     end;
 
 
-
+    t2 = time();
+    disp(sprintf('全连接层数据结构转换 %d',t2-t1));
 
     cost = sum(-log(a{L}(find(y==1))))/m;
 
-
+    t3 = time();
+    disp(sprintf('计算cost %d',t3-t2));
 %    进行反向传播算法
 %   默认最后一层为softmax层，所以最后一层的误差为
     Delta{L} = a{L}-y;
 
     for l=(L-1):-1:2,
+        t3t0 = time();
         if layerTypes(l+1) == 3 || layerTypes(l+1) == 2,
 %            如果当前层的下一层是softxmax或全连接层，
 
@@ -239,11 +255,16 @@ function [cost,gw,gb] = backPropagation(x,y,w,b,L,layerTypes,layerNeruals,ps)
             disp(sprintf('未定义的网络层类型 %d',layerTypes(l)));
             return;
         end;
+         t3t1 = time();
+
+        disp(sprintf('反向传播第%d层传递到%d层花费时间%d',l+1,l,t3t1-t3t0));
     end;
 
-
+   t4 = time();
+  disp(sprintf('delta反向传播 %d',t4-t3));
 %    计算梯度
     for l=2:L,
+        t4t0 = time();
         if layerTypes(l) == 3 || layerTypes(l) == 2,
 %            如果当前层是softxmax或全连接层，
 
@@ -298,7 +319,18 @@ function [cost,gw,gb] = backPropagation(x,y,w,b,L,layerTypes,layerNeruals,ps)
             disp(sprintf('未定义的网络层类型 %d',layerTypes(l)));
             return;
         end;
+                 t4t1 = time();
+
+                disp(sprintf('计算第%d层梯度花费时间%d',l,t4t1-t4t0));
     end;
+
+   t5 = time();
+
+
+
+
+
+   disp(sprintf('梯度计算 %d',t5-t4));
 
 end;
 

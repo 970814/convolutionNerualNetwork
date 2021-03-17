@@ -1,7 +1,7 @@
 function err = gradientCheck(gw,gb,x,y,w,b,L,layerTypes,layerNeruals,ps)
 
 %   梯度检测
-    gradientCheck = false;
+    gradientCheck = true;
     err=false;
     if gradientCheck,
 
