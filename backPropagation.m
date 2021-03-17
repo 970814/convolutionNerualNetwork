@@ -17,7 +17,7 @@ function [cost,gw,gb] = backPropagation(x,y,w,b,L,layerTypes,layerNeruals,ps)
     a{1}=x;
     z={};
 %    用于记录 最大池化 前 最大值的位置
-    maxPoolingLocation={};
+%    maxPoolingLocation={};
     for l=2:L,
         t0t0=time();
 
@@ -29,7 +29,7 @@ function [cost,gw,gb] = backPropagation(x,y,w,b,L,layerTypes,layerNeruals,ps)
             z{l}  = zeros(layerNeruals(l,1),layerNeruals(l,2),layerNeruals(l,3),m);
 
             for c=1:C,
-    %            多张多通道图片 与 3d卷积核 卷积操作
+    %            多张多通道图片 与 单个3d卷积核 卷积操作
                 z{l}(:,:,c,:) = nnConvolution(a{l-1} , w{l}(:,:,:,c)) .+ b{l}(c);
 
             end;
@@ -37,49 +37,77 @@ function [cost,gw,gb] = backPropagation(x,y,w,b,L,layerTypes,layerNeruals,ps)
 
 
         elseif layerTypes(l) == 1,
+%            不支持1*1的池化层
+            if ps{l}(1)==1 &&ps{l}(1)==1 ,
+%                1*1的池化层没有任何作用，浪费资源
+                disp('不支持1*1的池化层');
+                return;
+            end;
+
     %        如果是池化层
             r = layerNeruals(l,1);
             c = layerNeruals(l,2);
             zt=[];
     %  默认采用最大池化，
-            maxPoolingLocation{l}=[];
+%            maxPoolingLocation{l}=[];
+%            mpls{l}=[];
+
+            DeltaP{l}=[];
             for j=1:c,
+                dtp = [];
                 for i=1:r,
                     t = a{l-1}([((i-1)*ps{l}(1)+1):(i*ps{l}(1))],[((j-1)*ps{l}(2)+1):(j*ps{l}(2))],:,:);
 
-                    mpl=[];
-                    maxV=[];
+%                    mpl=[];
+%                    maxV=[];
+%
+%%                    定位每个样本
+%                    for s1 =  1:size(t,4),
+%%                        定位每一片
+%                        for s2 =1: size(t,3),
+%
+%                            maxIndexR=-1;
+%                            maxIndexC=-1;
+%                            V = -inf;
+%                            for s3 = 1:ps{l}(2),
+%                                for s4= 1:ps{l}(1),
+%%                                    更新最大值 和位置
+%                                    if t(s4,s3,s2,s1) > V,
+%                                        V=t(s4,s3,s2,s1);
+%                                        maxIndexR= s4;
+%                                        maxIndexC= s3;
+%                                    end;
+%                                end;
+%                            end;
+%                            mpl(:,:,s2,s1)=[maxIndexR,maxIndexC];
+%                            maxV(:,:,s2,s1) = [V];
+%                        end;
+%                    end;
+%                    zt = [zt maxV];
+%                    maxPoolingLocation{l} =[maxPoolingLocation{l}; mpl];
 
-%                    定位每个样本
-                    for s1 =  1:size(t,4),
-%                        定位每一片
-                        for s2 =1: size(t,3),
+% 此算法为上面池化算法的一个快速向量化算法，从14s花费时间降低到80ms，详细参考 [反向传播算法-最大池优化后-算法耗费时间.txt] 文件
+                    B = reshape(t,ps{l}(2)*ps{l}(1),1,size(t,3),size(t,4));
+                    [C D]= max(B);
 
-                            maxIndexR=-1;
-                            maxIndexC=-1;
-                            V = -inf;
-                            for s3 = 1:ps{l}(2),
-                                for s4= 1:ps{l}(1),
-%                                    更新最大值 和位置
-                                    if t(s4,s3,s2,s1) > V,
-                                        V=t(s4,s3,s2,s1);
-                                        maxIndexR= s4;
-                                        maxIndexC= s3;
-                                    end;
-                                end;
-                            end;
-                            mpl(:,:,s2,s1)=[maxIndexR,maxIndexC];
-                            maxV(:,:,s2,s1) = [V];
-                        end;
-                    end;
-
+                    dx = [0:size(t,3)*size(t,4)-1]';
+                    dx = dx*ps{l}(2)*ps{l}(1);
+                    D = reshape(D,size(t,3)*size(t,4),1);
+                    De = zeros(ps{l}(2)*ps{l}(1),1,size(t,3),size(t,4));
+                    De(dx+D)=1;
+                    De = reshape(De,ps{l}(1),ps{l}(2),size(t,3),size(t,4));
 
 %                    将池化结果合并
-                    zt = [zt maxV];
-                    maxPoolingLocation{l} =[maxPoolingLocation{l}; mpl];
-
+                    zt = [zt C];
+                    dtp = [dtp; De];
                 end;
+%                生成一个矩阵DeltaP，最大值的位置数据为1，否则皆为0
+                DeltaP{l} = [DeltaP{l}  dtp];
             end;
+%            ecount = r*c*size(t,3)*size(t,4);
+%            整体转换成列向量
+%            mpls{l} = reshape(mpls{l},ecount,1,1,1);
+
             z{l} = reshape(zt,r,c,size(t,3),size(t,4));
             a{l} = z{l};
         elseif layerTypes(l) == 2,
@@ -190,30 +218,51 @@ function [cost,gw,gb] = backPropagation(x,y,w,b,L,layerTypes,layerNeruals,ps)
         elseif layerTypes(l+1) == 1,
 %            如果当前层的下一层是池化层，
 %           因此计算当前层z的4维
-            [H,W,C,M]=size(z{l});
+%            [H,W,C,M]=size(z{l});
             [H2,W2,C2,M2]=size(z{l+1});
 
 
-            Delta{l} = zeros(H,W,C,M);
+%            Delta{l} = zeros(H,W,C,M);
 %            mpl记录了这一层池化池化时，最大值的位置，是    神经元个数*2*C*M 的维度
-            mpl = maxPoolingLocation{l+1};
-            nerualsCount = size(mpl);
-%            每个元素
-            for s1 = 1:M,
-%                每个通道
-                for s2 =1:C,
-%                    进行unsample 操作
-                    for w2 = 1:W2,
-                        for h2 = 1:H2,
-%                           将池化层元素位置还原到上一层卷积层相应元素起始位置上,然后根据最大元素位置定位
-                            s3 = (h2-1)*ps{l+1}(1)+mpl((w2-1)*H2+h2,1,s2,s1);
-                            s4 = (w2-1)*ps{l+1}(2)+mpl((w2-1)*H2+h2,2,s2,s1);
-%                           修复池化层反向传播的bug，遗漏了a关于z的偏导数项
-                            Delta{l}(s3,s4,s2,s1) = Delta{l+1}(h2,w2,s2,s1) .* derNonLinActFun(z{l}(s3,s4,s2,s1));
+%            mpl = maxPoolingLocation{l+1};
+%            nerualsCount = size(mpl);
+%%            每个元素
+%            for s1 = 1:M,
+%%                每个通道
+%                for s2 =1:C,
+%%                    进行unsample 操作
+%                    for w2 = 1:W2,
+%                        for h2 = 1:H2,
+%%                           将池化层元素位置还原到上一层卷积层相应元素起始位置上,然后根据最大元素位置定位
+%                            s3 = (h2-1)*ps{l+1}(1)+mpl((w2-1)*H2+h2,1,s2,s1);
+%                            s4 = (w2-1)*ps{l+1}(2)+mpl((w2-1)*H2+h2,2,s2,s1);
+%%                           修复池化层反向传播的bug，遗漏了a关于z的偏导数项
+%                            Delta{l}(s3,s4,s2,s1) = Delta{l+1}(h2,w2,s2,s1) .* derNonLinActFun(z{l}(s3,s4,s2,s1));
+%                        end;
+%                    end;
+%                end;
+%            end;
+
+
+            unit = [];
+            for h2 = 1:H2,
+                unit2 = [];
+                for w2 = 1:W2,
+                    unit3=[];
+                    for s1 = 1:ps{l+1}(1),
+                        unit4 = [];
+                        for s2 = 1:ps{l+1}(2),
+                            unit4 = [unit4 Delta{l+1}(h2,w2,:,:)];
                         end;
+                        unit3 = [unit3;unit4];
                     end;
+                    unit2 = [unit2 unit3];
                 end;
+                unit = [unit;unit2];
             end;
+
+            Delta{l} = DeltaP{l+1} .* unit .* derNonLinActFun(z{l});
+
 
 
 
@@ -308,10 +357,17 @@ function [cost,gw,gb] = backPropagation(x,y,w,b,L,layerTypes,layerNeruals,ps)
 %                   计算第i个卷积核的第j片梯度,
                     gw{l}(:,:,j,i) = zeros(H2,W2);
 %                    计算k个样本梯度的平均值
+
+                    Aj=[];
+                    Dj =[];
                     for k=1:m,
+                        Aj(:,:,k) = a{l-1}(:,:,j,k);
+                        Dj(:,:,k) = Delta{l}(:,:,i,k);
 %                        进行二维卷积操作
-                        gw{l}(:,:,j,i) =gw{l}(:,:,j,i) + nnConvolution(a{l-1}(:,:,j,k),Delta{l}(:,:,i,k));
+%                        gw{l}(:,:,j,i) =gw{l}(:,:,j,i) + nnConvolution(a{l-1}(:,:,j,k),Delta{l}(:,:,i,k));
                     end;
+%                   多通道数据与3d卷积核的快速卷积操作，从9.5s降低到2.5s,详细参考文件 [反向传播算法-梯度计算优化后-算法耗费时间.txt]
+                    gw{l}(:,:,j,i) = nnConvolution(Aj, Dj);
                     gw{l}(:,:,j,i) = gw{l}(:,:,j,i) ./ m;
                 end;
             end;

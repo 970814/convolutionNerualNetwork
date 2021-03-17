@@ -7,6 +7,7 @@ function cost = forwardPropagation(x,y,w,b,L,layerTypes,layerNeruals,ps)
 %    layerNeruals 记录了每层的神经元个数
 %    ps 记录每层的池化大小
 
+    t0 = time();
     m=size(x,4);
     a=x;
     for l=2:L,
@@ -36,32 +37,27 @@ function cost = forwardPropagation(x,y,w,b,L,layerTypes,layerNeruals,ps)
             for j=1:c,
                 for i=1:r,
                     t = a([((i-1)*ps{l}(1)+1):(i*ps{l}(1))],[((j-1)*ps{l}(2)+1):(j*ps{l}(2))],:,:);
-%修复bug，当采用1层池化时，max(max( 对于 1,1,:,: 类型的数据将会得到单个值,必须显示使用对何维度求最大值
-%                    t
-%                    t =  max(max(t));% 池化大小必须大于1,
-%                    t
-%                    size(t)
-%                    max(max(t,1),1)
 
+%                    maxV=[];
+%                    for s1 =  1:size(t,4),
+%                        for s2 =1: size(t,3),
+%
+%                            V = -inf;
+%                            for s3 = 1:ps{l}(2),
+%                                for s4= 1:ps{l}(1),
+%%                                    更新最大值
+%                                    if t(s4,s3,s2,s1) > V,
+%                                        V=t(s4,s3,s2,s1);
+%                                    end;
+%                                end;
+%                            end;
+%                            maxV(:,:,s2,s1) = [V];
+%                        end;
+%                    end;
+%                     修改成该向量化写法，向前传播算法花费数据从14s降低到0.287s
+                    C = max(reshape(t,ps{l}(2)*ps{l}(1),1,size(t,3),size(t,4)));
 
-                    maxV=[];
-                    for s1 =  1:size(t,4),
-                        for s2 =1: size(t,3),
-
-                            V = -inf;
-                            for s3 = 1:ps{l}(2),
-                                for s4= 1:ps{l}(1),
-%                                    更新最大值
-                                    if t(s4,s3,s2,s1) > V,
-                                        V=t(s4,s3,s2,s1);
-                                    end;
-                                end;
-                            end;
-                            maxV(:,:,s2,s1) = [V];
-                        end;
-                    end;
-
-                    z = [z maxV];
+                    z = [z C];
                 end;
             end;
             z = reshape(z,r,c,size(t,3),size(t,4));
@@ -128,6 +124,9 @@ function cost = forwardPropagation(x,y,w,b,L,layerTypes,layerNeruals,ps)
 % 因此 y也是SL*m的矩阵
     cost = sum(-log(a(find(y==1))))/m;
 
+     t1 = time();
+
+     disp(sprintf('向前传播 %d',t1-t0));
 end;
 
 
