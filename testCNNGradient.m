@@ -25,6 +25,8 @@ function testCNNGradient()
     [w,b] = unboxingParameters(wb,L,layerTypes,layerNeruals);
 %    前向传播测试
     forwardPropagation(x,y,w,b,L,layerTypes,layerNeruals,ps)
+
+    h = predict(x,w,b,L,layerTypes,layerNeruals,ps)
 %    反向传播计算梯度，并进行梯度检测
     cnnCostAndGradient(x,y,wb,L,layerTypes,layerNeruals,ps)
 
