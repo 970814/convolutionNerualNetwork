@@ -2,7 +2,7 @@ function testHandwrittenNumeralRecognition()
 
     addpath('../');
 % 载入训练好的模型
-    load('../report/fileReport 18-Mar-2021 04:00:04.txt');
+    load('../report/fileReport 18-Mar-2021 15:05:12.txt');
 
 % 绘制 cost 随 iterations 的变化
     figure(1);
