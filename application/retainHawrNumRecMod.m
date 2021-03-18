@@ -3,16 +3,6 @@ function retainHawrNumRecMod()
     clear all;
     addpath('../');
 
-%    % -1 代表输入层，0代表卷积层，1代表池化层，2代表全连接层，3代表softmax输出层
-%    layerTypes   = [-1,            0,           1              0             1         2            3]
-%    % 网络每层神经元的规模
-%    layerNeruals = [28,28,1;     24,24,20;     12,12,20;      8,8,40;     4,4,40;    100,1,1;     10,1,1]
-%    %池化区域大小
-%    ps{3}=[2,2];
-%    ps{5}=[2,2];
-%    %网络层数
-%    L = length(layerTypes);
-
 %   载入训练集和测试集
     load('../fixDataSets/handwrittenDigit/data')
     m=length(Y);
@@ -31,7 +21,7 @@ function retainHawrNumRecMod()
     disp(sprintf('测试集样本大小%d',testmM))
 
 
-% 载入训练好的模型
+% 载入训练好的模型,还存储了相应的网络配置
     load('../report/fileReport 18-Mar-2021 15:05:12.txt');
     wb = betterWBs(:,end);
 
