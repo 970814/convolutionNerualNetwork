@@ -1,5 +1,5 @@
 function testNnConvolution()
-
+    addpath('../');
     a=[1 2 3;3 4 5;5 6 7;7 8 9];
     w=[1 2 ;3 4];
 %   单张单通道图片   与   单个2d卷积核 进行卷积操作

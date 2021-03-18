@@ -1,4 +1,4 @@
-%function handwrittenNumeralRecognition()
+function handwrittenNumeralRecognition()
     close all;
     clear all;
 %
@@ -12,13 +12,11 @@
     %网络层数
     L = length(layerTypes);
 
-    maxSize = inf;
-     %载入训练集
-    [x,y,Y] = readHandwrittenTrainData(maxSize);
+
+%   载入训练集和测试集
+    load('../fixDataSets/handwrittenDigit/data')
     m=length(Y);
     disp(sprintf('训练集样本大小%d',m))
-%    载入测试集
-    [testx,testy,testY] = readHandwrittenTestData(maxSize);
     testmM=length(testY);
     disp(sprintf('测试集样本大小%d',testmM))
 
@@ -148,4 +146,4 @@
 
 
 
-%end;
+end;

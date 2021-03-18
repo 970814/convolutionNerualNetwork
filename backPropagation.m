@@ -365,8 +365,7 @@ function [cost,gw,gb] = backPropagation(x,y,w,b,L,layerTypes,layerNeruals,ps)
 %                        gw{l}(:,:,j,i) =gw{l}(:,:,j,i) + nnConvolution(a{l-1}(:,:,j,k),Delta{l}(:,:,i,k));
                     end;
 %                   多通道数据与3d卷积核的快速卷积操作，从9.5s降低到2.5s,详细参考文件 [反向传播算法-梯度计算优化后-算法耗费时间.txt]
-                    gw{l}(:,:,j,i) = nnConvolution(Aj, Dj);
-                    gw{l}(:,:,j,i) = gw{l}(:,:,j,i) ./ m;
+                    gw{l}(:,:,j,i) = nnConvolution(Aj, Dj)./ m;
                 end;
             end;
         else

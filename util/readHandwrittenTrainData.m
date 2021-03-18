@@ -1,4 +1,4 @@
-function [x,y,labels] = readHandwrittenTestData(maxCount)
+function [x,y,labels] = readHandwrittenTrainData(maxCount)
 
 
 
@@ -7,7 +7,7 @@ function [x,y,labels] = readHandwrittenTestData(maxCount)
 %参考 http://yann.lecun.com/exdb/mnist/
 
 %读取图片labels
-fid=fopen('../dataSets/handwrittenDigit/t10k-labels.idx1-ubyte');
+fid=fopen('../dataSets/handwrittenDigit/train-labels.idx1-ubyte');
 magNum_l=fread(fid,1,'int','ieee-be')
 %获取labels数量
 itemCount_l=fread(fid,1,'int','ieee-be')
@@ -15,7 +15,7 @@ itemCount_l=fread(fid,1,'int','ieee-be')
 labels=fread(fid,min([maxCount itemCount_l]),'uint8','ieee-be');
 
 %读取图片
-fid=fopen('../dataSets/handwrittenDigit/t10k-images.idx3-ubyte');
+fid=fopen('../dataSets/handwrittenDigit/train-images.idx3-ubyte');
 magNum_i=fread(fid,1,'int','ieee-be')
 %获取图片数量
 itemCount_i=fread(fid,1,'int','ieee-be')
@@ -32,7 +32,7 @@ x = reshape(images,rows_i,columns_i,1,m);
 y= zeros(10,m);
 for i = 1:m,
 %    这个转置操作过分花费时间
-%    x(:,:,1,i) = t(:,:,i)';
+%    x(:,:,i) = x(:,:,1,i)';
     y(labels(i)+1,i) = 1;
 %    y(:,i)
 %    labels(i)
