@@ -22,14 +22,14 @@ function handwrittenNumeralRecognition()
     % 初始化参数
     wb = initializeParameters(L,layerTypes,layerNeruals);
 
-    m = 10;
-    x=x(:,:,1,1:m);
-    y=y(:,1:m);
-    Y=Y(1:m);
-    testmM=10;
-    testx=testx(:,:,1,1:testmM);
-    testy=testy(:,1:testmM);
-    testY=testY(1:testmM);
+%    m = 10;
+%    x=x(:,:,1,1:m);
+%    y=y(:,1:m);
+%    Y=Y(1:m);
+%    testmM=10;
+%    testx=testx(:,:,1,1:testmM);
+%    testy=testy(:,1:testmM);
+%    testY=testY(1:testmM);
 
     disp(sprintf('训练集样本大小%d',m))
     disp(sprintf('测试集样本大小%d',testmM))
@@ -50,7 +50,7 @@ function handwrittenNumeralRecognition()
 %     训练批次
     epoths = 2;
     % 迷你训练批次大小,总训练集大小为60000 = 100*600
-    miniBatchSize = 2;
+    miniBatchSize = 100;
     betterWB = wb;
     betterWBs = [];
     accuracies = [];
