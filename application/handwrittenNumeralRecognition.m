@@ -17,6 +17,9 @@ function handwrittenNumeralRecognition()
     load('../fixDataSets/handwrittenDigit/data')
     m=length(Y);
     testmM=length(testY);
+%    对数据进行归一化
+    x=x/255;
+    testx=testx/255;
 
 %    m = 4;
 %    x=x(:,:,1,1:m);

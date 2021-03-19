@@ -14,9 +14,9 @@ function trainHawrNumRecMod(wb,x,y,Y,testx,testy,testY,L,m,layerNeruals,layerTyp
 %      为fminunc高级优化函数设置参数
 %    options = optimset('GradObj', 'on', 'MaxIter', 2);
 %     训练批次
-    epoths = 2;
+    epoths = 10
     % 迷你训练批次大小,总训练集大小为60000 = 100*600
-    miniBatchSize = 100;
+    miniBatchSize = 100
     betterWB = wb;
     betterWBs = [];
     accuracies = [];

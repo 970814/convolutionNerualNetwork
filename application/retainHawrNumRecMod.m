@@ -7,7 +7,9 @@ function retainHawrNumRecMod()
     load('../fixDataSets/handwrittenDigit/data')
     m=length(Y);
     testmM=length(testY);
-
+%    对数据进行归一化
+    x=x/255;
+    testx=testx/255;
 %    m = 4;
 %    x=x(:,:,1,1:m);
 %    y=y(:,1:m);
@@ -22,7 +24,7 @@ function retainHawrNumRecMod()
 
 
 % 载入训练好的模型,还存储了相应的网络配置
-    load('../report/fileReport 18-Mar-2021 15:05:12.txt');
+    load('../report/fileReport 18-Mar-2021 21:38:36.txt');
     wb = betterWBs(:,end);
 
 %    训练模型wb参数

@@ -2,12 +2,13 @@ function testHandwrittenNumeralRecognition()
 
     addpath('../');
 % 载入训练好的模型
-    load('../report/fileReport 18-Mar-2021 15:05:12.txt');
+    load('../report/fileReport 20-Mar-2021 00:44:09.txt');
 
 % 绘制 cost 随 iterations 的变化
     figure(1);
     hold on;
-    plot([0:(length(costs)-1)],costs);
+    plot([1:(length(costs))],costs);
+    axis([1,length(costs)])
     title('Cost');
     xlabel('iterations');
     ylabel('costs');
@@ -16,8 +17,9 @@ function testHandwrittenNumeralRecognition()
 % 绘制 train 和 test 集 上 cost 随 epoths 的变化
     figure(2);
     hold on;
-    plot([0:(length(USCosts)-1)],USCosts);
-    plot([0:(length(testCosts)-1)],testCosts);
+    plot([1:(length(USCosts))],USCosts);
+    plot([1:(length(testCosts))],testCosts);
+    axis([1,length(USCosts)])
     title('Cost');
     legend('train','test');
     xlabel('epoths');
@@ -27,8 +29,9 @@ function testHandwrittenNumeralRecognition()
 % 绘制 train 和 test 集 上 accuracy 随 epoths 的变化
     figure(3);
     hold on;
-    plot([0:(length(accuracies)-1)],accuracies);
-    plot([0:(length(testAccuracies)-1)],testAccuracies);
+    plot([1:(length(accuracies))],accuracies);
+    plot([1:(length(testAccuracies))],testAccuracies);
+    axis([1,length(accuracies)])
     title('Accuracy');
     legend('train','test');
     xlabel('epoths');
@@ -37,20 +40,24 @@ function testHandwrittenNumeralRecognition()
 % 绘制 train 和 test 集 上 耗时 随 epoths 的变化
     figure(4);
     hold on;
-    plot([0:(length(perEpothCostTms)-1)],perEpothCostTms);
+    plot([1:(length(perEpothCostTms))],perEpothCostTms);
+    axis([1,length(perEpothCostTms)])
     title('CostTime');
     xlabel('epoth(th)');
     ylabel('cost-time');
     hold off;
 
 
-    betterWB = betterWBs(:,end);
+    betterWB = betterWBs(:,end-1);
 
 
 
 
 %   载入训练集和测试集
     load('../fixDataSets/handwrittenDigit/data')
+%    对数据进行归一化
+    x=x/255;
+    testx=testx/255;
     m=length(Y);
     disp(sprintf('训练集样本大小%d',m))
     testmM=length(testY);
