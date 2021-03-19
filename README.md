@@ -1,3 +1,4 @@
+
 ## 卷积神经网络
 
 ### 应用一
@@ -9,40 +10,34 @@
 
    <img width="249" alt="" src="https://tf.wiki/_images/mnist_0-9.png">
 
-
-- 使用[mnist训练集](http://neuralnetworksanddeeplearning.com/chap4.html)
-  - 训练集为50000张图片
-  - 测试集为10000张图片
-
 - 达到的效果
   - 拟合度99.707%,测试集上 **准确率99.12%** ，在训练了9个epoth获得
   - 仅仅训练了9个epoth，相比于全连接神经网络已经提升了近1个百分点，是很大的改进
   - 实际上，通过一些优化方法的组合，如 _数据增强、合理调整卷积层卷积核个数大小、隐藏层神经元个数、BatchNormalize、L2 Regularization、Dropout_ 等方法， 是能够将模型的准确率提升至99.6%的。这些优化待更新。
 
+- 使用[mnist训练集](http://neuralnetworksanddeeplearning.com/chap4.html)
+  - 训练集为50000张图片
+  - 测试集为10000张图片
 
 
 - 学习曲线
 
 训练集上cost 关于 迭代次数 的变化曲线
 
-<img width="492" alt="" src="https://user-images.githubusercontent.com/19931702/110574313-db0c6700-8197-11eb-8280-4bbc50c84a1f.png">
-
-训练集和测试上的错误率关于 迭代epoths次数的变化曲线
-
-<img width="489" alt="" src="https://user-images.githubusercontent.com/19931702/110574304-d5168600-8197-11eb-84b9-d5d951c7cad5.png">
+<img width="496" alt="" src="https://user-images.githubusercontent.com/19931702/111852337-844e1c80-8951-11eb-99e3-e966dbac10da.png">
 
 训练集和测试上的准确率关于 迭代epoths次数的变化曲线
 
-<img width="490" alt="" src="https://user-images.githubusercontent.com/19931702/110574297-d21b9580-8197-11eb-9dc2-939399adb03d.png">
+<img width="496" alt="" src="https://user-images.githubusercontent.com/19931702/111852398-b9f30580-8951-11eb-81c6-1bde39de8686.png">
+
 
 训练集和测试上的cost关于 迭代epoths次数的变化曲线
 
-<img width="491" alt="" src="https://user-images.githubusercontent.com/19931702/110574290-ce880e80-8197-11eb-8022-67940cd3962b.png">
+<img width="497" alt="" src="https://user-images.githubusercontent.com/19931702/111852418-c8d9b800-8951-11eb-82ef-4e20acbfb706.png">
 
 训练每个epoth所花费的时间曲线变化
 
-<img width="507" alt="" src="https://user-images.githubusercontent.com/19931702/110574274-c9c35a80-8197-11eb-8783-3a545fc0c846.png">
-
+<img width="503" alt="" src="https://user-images.githubusercontent.com/19931702/111852436-e3ac2c80-8951-11eb-818b-f34aa29c29e7.png">
 
 
 ### 测试
