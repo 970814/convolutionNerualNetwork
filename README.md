@@ -19,6 +19,10 @@
   - 训练集为50000张图片
   - 测试集为10000张图片
 
+- 网络架构
+
+<img width="574" alt="" src="https://user-images.githubusercontent.com/19931702/111853493-3be52d80-8956-11eb-95e5-8d4de2c39318.png">
+
 
 - 学习曲线
 
