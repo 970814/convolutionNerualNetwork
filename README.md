@@ -13,7 +13,7 @@
 - 达到的效果
   - 拟合度99.707%,测试集上 准确率**99.12%** ，在训练了9个epoth获得
   - 仅仅训练了9个epoth，相比于全连接神经网络已经提升了近1个百分点，是很大的改进
-  - 实际上，通过一些优化方法的组合，如 _数据增强、合理调整卷积层卷积核个数大小、隐藏层神经元个数、BatchNormalize、L2 Regularization、Dropout_ 等方法， 是能够将模型的准确率提升至99.6%的。这些优化待更新。
+  - 实际上，通过更多的训练以及一些优化方法的组合，如 _数据增强、合理调整卷积层卷积核个数大小、隐藏层神经元个数、BatchNormalize、L2 Regularization、Dropout_ 等方法， 是能够将模型的准确率提升至99.6%的。这些优化待更新。
 
 - 使用[mnist训练集](http://neuralnetworksanddeeplearning.com/chap4.html)
   - 训练集为50000张图片
